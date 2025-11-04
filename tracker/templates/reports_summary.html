@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container" style="max-width: 960px;">
+  <h1 class="text-center mb-4">Reports</h1>
+
+  <!-- Barra de filtros -->
+  <div class="card bg-dark border-secondary mb-4">
+    <div class="card-body">
+      <h2 class="h5 text-center mb-3">Filters</h2>
+      <form method="get" class="row g-3 justify-content-center text-center">
+        <div class="col-12 col-md-4">
+          <label class="form-label">Category:</label>
+          <select name="category" class="form-select">
+            <option value="">(all)</option>
+            {% for c in categories %}
+              <option value="{{ c.id }}" {% if current.category == c.id|stringformat:"s" %}selected{% endif %}>
+                {{ c.name }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="col-6 col-md-4">
+          <label class="form-label">From:</label>
+          <input type="date" name="start" value="{{ current.start }}" class="form-control">
+        </div>
+
+        <div class="col-6 col-md-4">
+          <label class="form-label">To:</label>
+          <input type="date" name="end" value="{{ current.end }}" class="form-control">
+        </div>
+
+        <div class="col-12">
+          <button type="submit" class="btn btn-primary me-2">Apply filters</button>
+          <a href="{% url 'reports_summary' %}" class="btn btn-outline-light">Clear</a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Tabla de resumen -->
+  {% if summary %}
+    <div class="table-responsive">
+      <table class="table table-dark table-striped table-bordered align-middle text-center">
+        <thead>
+          <tr>
+            <th>Category</th>
+            <th>Total Amount</th>
+            <th>Number of Expenses</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in summary %}
+          <tr>
+            <td>{{ row.category__name }}</td>
+            <td>{{ row.total_amount }}</td>
+            <td>{{ row.count }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <p class="text-center">No data for selected filters.</p>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container" style="max-width: 960px;">
+  <h1 class="text-center mb-4">Expenses</h1>
+
+  <!-- Barra de filtros -->
+  <div class="card bg-dark border-secondary mb-4">
+    <div class="card-body">
+      <h2 class="h5 text-center mb-3">FILTERS</h2>
+      <form method="get" class="row g-3 justify-content-center text-center">
+        <div class="col-12 col-md-4">
+          <label class="form-label">Category:</label>
+          <select name="category" class="form-select">
+            <option value="">(all)</option>
+            {% for c in categories %}
+              <option value="{{ c.id }}" {% if current.category == c.id|stringformat:"s" %}selected{% endif %}>
+                {{ c.name }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="col-6 col-md-4">
+          <label class="form-label">From:</label>
+          <input type="date" name="start" value="{{ current.start }}" class="form-control">
+        </div>
+
+        <div class="col-6 col-md-4">
+          <label class="form-label">To:</label>
+          <input type="date" name="end" value="{{ current.end }}" class="form-control">
+        </div>
+
+        <div class="col-12 col-md-6">
+          <label class="form-label">Search (description):</label>
+          <input type="text" name="q" value="{{ current.q }}" class="form-control" placeholder="e.g. coffee, uber…">
+        </div>
+
+        <div class="col-6 col-md-3">
+          <label class="form-label">Order by:</label>
+          <select name="order" class="form-select">
+            <option value="date" {% if current.order == "date" %}selected{% endif %}>Date</option>
+            <option value="amount" {% if current.order == "amount" %}selected{% endif %}>Amount</option>
+          </select>
+        </div>
+
+        <div class="col-6 col-md-3">
+          <label class="form-label">Direction:</label>
+          <select name="dir" class="form-select">
+            <option value="desc" {% if current.dir == "desc" %}selected{% endif %}>Desc</option>
+            <option value="asc" {% if current.dir == "asc" %}selected{% endif %}>Asc</option>
+          </select>
+        </div>
+
+        <div class="col-12">
+          <button type="submit" class="btn btn-primary me-2">Apply filters</button>
+          <a class="btn btn-outline-light" href="{% url 'expenses_list' %}">Clear</a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Tabla de gastos -->
+  {% if expenses %}
+    <div class="table-responsive">
+      <table class="table table-dark table-striped table-bordered align-middle text-center">
+        <thead class="table-dark">
+          <tr>
+            <th>Date</th>
+            <th>Category</th>
+            <th>Amount</th>
+            <th>Payment</th>
+            <th>Description</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for e in expenses %}
+          <tr>
+            <td>{{ e.date }}</td>
+            <td>{{ e.category.name }}</td>
+            <td>{{ e.amount }}</td>
+            <td>{{ e.get_payment_method_display }}</td>
+            <td>{{ e.description|default:"-" }}</td>
+            <td>
+              <a class="btn btn-sm btn-outline-light me-2" href="{% url 'expense_update' e.pk %}">Edit</a>
+              <a class="btn btn-sm btn-danger" href="{% url 'expense_delete' e.pk %}">Delete</a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Fila inferior: paginación (izq) + botones (der) -->
+<div class="d-flex justify-content-between align-items-center mt-3">
+  <!-- Paginación a la izquierda -->
+  <div class="small">
+    {% if page_obj.has_previous %}
+      <a class="me-2" href="?page=1&{{ request.GET.urlencode }}">« First</a>
+      <a class="me-2" href="?page={{ page_obj.previous_page_number }}&{{ request.GET.urlencode }}">‹ Prev</a>
+    {% endif %}
+
+    <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+
+    {% if page_obj.has_next %}
+      <a class="ms-2" href="?page={{ page_obj.next_page_number }}&{{ request.GET.urlencode }}">Next ›</a>
+      <a class="ms-2" href="?page={{ page_obj.paginator.num_pages }}&{{ request.GET.urlencode }}">Last »</a>
+    {% endif %}
+  </div>
+
+  <!-- Botones a la derecha -->
+  <div class="d-flex gap-2">
+    <a href="{% url 'expenses_export_csv' %}" class="btn btn-outline-light btn-sm">Export CSV</a>
+    <a href="{% url 'expenses_export_json' %}" class="btn btn-outline-light btn-sm">Export JSON</a>
+    <a href="{% url 'expense_create' %}" class="btn btn-primary btn-sm">+ New Expense</a>
+  </div>
+</div>
+  {% endif %}
+</div>
+{% endblock %}
