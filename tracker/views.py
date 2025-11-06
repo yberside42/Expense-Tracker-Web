@@ -17,6 +17,19 @@ def home(request):
 def signup(request):
     if request.method == "POST":
         form = SignupForm(request.POST)
+        print("POST DATA:", {k: v for k, v in request.POST.items() if k in ("username","password1","password2")})
+        print("VALID?", form.is_valid())
+        print("ERRORS:", form.errors.as_json())
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return redirect("expenses_list")
+    else:
+        form = SignupForm()
+    return render(request, "registration/signup.html", {"form": form})
+# def signup(request):
+    if request.method == "POST":
+        form = SignupForm(request.POST)
         if form.is_valid():
             user = form.save()
             login(request, user)
