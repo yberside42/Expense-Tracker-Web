@@ -13,12 +13,21 @@ Users can add, edit, delete and search using filters. The app supports data expo
 ## Features
 
 - User authentication: Login and Sign Up system.
+
+![Home view](Screenshots/ETW1.png)
+![Home view](Screenshots/ETW2.png)
+
 - Expense Management: Add, edit and delete expenses.
 - Search and filters: Search by category, date range or description. 
 - Order: Users can order their expenses by date or amount. 
 - Categories: The user can create custom categories to use in their expenses. 
 - Reports: Users can generate reports filtered by category and / or date range.
 - Export: Users can export their expenses list (raw or filtered) to CSV or JSON.
+
+![Home view](Screenshots/ETW3.png)
+![Home view](Screenshots/ETW4.png)
+![Home view](Screenshots/ETW5.png)
+
 
 ## Structure
 
